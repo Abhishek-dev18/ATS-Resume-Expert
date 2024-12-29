@@ -111,14 +111,3 @@ The application uses SQLite to store analysis history, including:
 - Keep formatting clean and consistent
 - Update skills section based on job requirements
 
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-## License
-
-[Add your chosen license here]
-
-## Support
-
-For support, please [add your contact information or support channel here]
