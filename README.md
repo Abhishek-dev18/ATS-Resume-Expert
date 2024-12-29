@@ -21,7 +21,7 @@ ATS Resume Expert is a powerful web application built with Streamlit that helps 
 1. Clone the repository:
 ```bash
 git clone <repository-url>
-cd ats-resume-expert-pro
+cd ats-resume-expert
 ```
 
 2. Install required dependencies:
