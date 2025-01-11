@@ -14,7 +14,7 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v3
 
-      - name: Check for changes
+    - name: Check for changes
       id: check_changes
       run: |
         git fetch origin main
@@ -24,7 +24,7 @@ jobs:
           CHANGES="$CHANGES nginx/nginx.conf"
         fi
         echo "::set-output name=changes::$CHANGES"
-
+        
     - name: Set Environment Variables
       run: |
         if [ -z "${{ secrets.GOOGLE_API_KEY }}" ]; then
@@ -39,7 +39,6 @@ jobs:
       run: echo "No changes detected, skipping deployment."
 
     - name: Deploy to EC2 if changes detected
-      # if: steps.check_changes.outputs.changes != ''
       run: |
         echo "Deploying to EC2..."
         cd ~/ATS-Resume-Expert
