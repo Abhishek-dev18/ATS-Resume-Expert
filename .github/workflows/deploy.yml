@@ -22,7 +22,7 @@ jobs:
     - name: SSH to EC2 and Deploy
       run: |
         # Pull the latest code and images
-        cd ~/deploy
+        cd ~/ATS-Resume-Expert
         git pull origin main
         docker-compose pull
         docker-compose down
