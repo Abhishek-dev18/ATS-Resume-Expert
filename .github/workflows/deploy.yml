@@ -3,12 +3,12 @@ name: CI/CD Pipeline
 on:
   push:
     branches:
-      - main  # Trigger on pushes to the main branch
+      - main
 
 jobs:
   deploy:
     name: Deploy on EC2
-    runs-on: self-hosted  # Run on your EC2 instance (self-hosted runner)
+    runs-on: self-hosted
 
     steps:
     - name: Checkout Code
@@ -17,38 +17,30 @@ jobs:
     - name: Check for changes
       id: check_changes
       run: |
-        # Fetch the latest code from the remote repository
         git fetch origin main
-        
-        # Check if there are any changes since the last commit
         CHANGES=$(git diff --name-only ${{ github.sha }} origin/main)
-        
-        # Output the result for further steps to use
         echo "::set-output name=changes::$CHANGES"
-
-    - name: Set up Docker
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y docker.io docker-compose
 
     - name: Set Environment Variables
       run: |
-        echo "GOOGLE_API_KEY=${{ secrets.GOOGLE_API_KEY }}" >> /home/ubuntu/ATS-Resume-Expert/app/.env
+        if [ -z "${{ secrets.GOOGLE_API_KEY }}" ]; then
+          echo "Error: GOOGLE_API_KEY is not set!"
+          exit 1
+        fi
+        echo "GOOGLE_API_KEY=${{ secrets.GOOGLE_API_KEY }}" > /home/ubuntu/ATS-Resume-Expert/app/.env
+        cat /home/ubuntu/ATS-Resume-Expert/app/.env
 
+    - name: Notify if No Changes Detected
+      if: steps.check_changes.outputs.changes == ''
+      run: echo "No changes detected, skipping deployment."
 
-    - name: SSH to EC2 and Deploy if changes detected
+    - name: Deploy to EC2 if changes detected
       if: steps.check_changes.outputs.changes != ''
       run: |
-        echo "Changes detected, deploying to EC2..."
-        
-        # SSH into EC2 instance and run deployment commands
+        echo "Deploying to EC2..."
         cd ~/ATS-Resume-Expert
         git pull origin main
         docker-compose pull
         docker-compose down
         docker-compose up -d --build
         docker system prune -f
-
-    - name: Skip deployment if no changes
-      if: steps.check_changes.outputs.changes == ''
-      run: echo "No changes detected, skipping deployment."
