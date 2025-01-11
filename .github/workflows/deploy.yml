@@ -14,17 +14,41 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v3
 
+    - name: Check for changes
+      id: check_changes
+      run: |
+        # Fetch the latest code from the remote repository
+        git fetch origin main
+        
+        # Check if there are any changes since the last commit
+        CHANGES=$(git diff --name-only ${{ github.sha }} origin/main)
+        
+        # Output the result for further steps to use
+        echo "::set-output name=changes::$CHANGES"
+
     - name: Set up Docker
       run: |
         sudo apt-get update
         sudo apt-get install -y docker.io docker-compose
 
-    - name: SSH to EC2 and Deploy
+    - name: Set Environment Variables
       run: |
-        # Pull the latest code and images
+        echo "GOOGLE_API_KEY=${{ secrets.GOOGLE_API_KEY }}" >> $GOOGLE_API_KEY
+
+
+    - name: SSH to EC2 and Deploy if changes detected
+      # if: steps.check_changes.outputs.changes != ''
+      run: |
+        echo "Changes detected, deploying to EC2..."
+        
+        # SSH into EC2 instance and run deployment commands
         cd ~/ATS-Resume-Expert
         git pull origin main
         docker-compose pull
         docker-compose down
         docker-compose up -d --build
         docker system prune -f
+
+    - name: Skip deployment if no changes
+      if: steps.check_changes.outputs.changes == ''
+      run: echo "No changes detected, skipping deployment."
