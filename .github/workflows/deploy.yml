@@ -14,11 +14,15 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v3
 
-    - name: Check for changes
+      - name: Check for changes
       id: check_changes
       run: |
         git fetch origin main
         CHANGES=$(git diff --name-only ${{ github.sha }} origin/main)
+        # Check for changes in both main app files and nginx.conf
+        if echo "$CHANGES" | grep -q "nginx/nginx.conf"; then
+          CHANGES="$CHANGES nginx/nginx.conf"
+        fi
         echo "::set-output name=changes::$CHANGES"
 
     - name: Set Environment Variables
@@ -35,7 +39,7 @@ jobs:
       run: echo "No changes detected, skipping deployment."
 
     - name: Deploy to EC2 if changes detected
-      if: steps.check_changes.outputs.changes != ''
+      # if: steps.check_changes.outputs.changes != ''
       run: |
         echo "Deploying to EC2..."
         cd ~/ATS-Resume-Expert
