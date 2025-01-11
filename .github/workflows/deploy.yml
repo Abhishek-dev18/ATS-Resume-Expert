@@ -33,6 +33,8 @@ jobs:
 
     - name: Set Environment Variables
       run: |
+        echo "GOOGLE_API_KEY=${{ secrets.GOOGLE_API_KEY }}"
+
         echo "GOOGLE_API_KEY=${{ secrets.GOOGLE_API_KEY }}" >> /home/ubuntu/ATS-Resume-Expert/app/.env
 
 
