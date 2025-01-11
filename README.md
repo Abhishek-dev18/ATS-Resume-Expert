@@ -1,4 +1,4 @@
-# ATS Resume Expert
+  # ATS Resume Expert
 
 ATS Resume Expert is a powerful web application built with Streamlit that helps users optimize their resumes for Applicant Tracking Systems (ATS). The tool provides comprehensive resume analysis, skill matching, and recommendations by leveraging Google's Gemini AI model.
 
