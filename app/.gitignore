@@ -1,5 +1,6 @@
 # Virtual environment
 vene/
+env/
 
 # Environment variables
 .env
